@@ -1,0 +1,79 @@
+RewriteEngine On
+
+# =====================================
+# SEGURANÇA
+# =====================================
+
+# bloqueia acesso a arquivos sensíveis
+<FilesMatch "(^\.|composer\.(json|lock)|package\.json|webpack\.mix\.js)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# desativa listagem de diretórios
+Options -Indexes
+
+
+# =====================================
+# HTTPS + WWW (somente produção)
+# =====================================
+
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+
+# força HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# força WWW
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+
+# =====================================
+# CACHE DE ARQUIVOS ESTÁTICOS
+# =====================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpg "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/gif "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+
+    ExpiresByType font/woff "access plus 30 days"
+    ExpiresByType font/woff2 "access plus 30 days"
+    ExpiresByType application/font-woff "access plus 30 days"
+</IfModule>
+
+
+# =====================================
+# CORS PARA FONTES (evita erro que você teve)
+# =====================================
+
+<FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
+
+
+# =====================================
+# ROUTER MVC
+# =====================================
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=/$1 [L,QSA]
+
+
+# =====================================
+# CORS GLOBAL (API / AJAX)
+# =====================================
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
