@@ -56,7 +56,7 @@ class Online extends Model
         }
 
         $find = $this->findById($session->online);
-        if(!$find){
+        if (!$find) {
             $session->unset("online");
             return $this;
         }
@@ -66,7 +66,7 @@ class Online extends Model
         $find->pages += 1;
         $find->save();
 
-        if($clear){
+        if ($clear) {
             $this->clear();
         }
 
@@ -76,33 +76,5 @@ class Online extends Model
     public function clear(): void
     {
         $this->delete("updated_at <= NOW() - INTERNVAL {$this->sessionTime}", "");
-    }
-
-    /**
-     * Summary of save
-     * @return bool
-     */
-    public function save(): bool
-    {
-        $safe = $this->safe();
-
-        if (!empty($this->id)) {
-            $onlineId = $this->id;
-            $this->update($safe, "id = :id", "id={$onlineId}");
-            if ($this->fail()) {
-                $this->message->error("Erro ao atualizar, verifique os dados");
-                return false;
-            }
-            return true;
-        }
-
-        $onlineId = $this->create($safe);
-        if ($this->fail()) {
-            $this->message->error("Erro ao cadastrar, verifique os dados");
-            return false;
-        }
-
-        $this->data = $this->findById($onlineId)->data();
-        return true;
     }
 }

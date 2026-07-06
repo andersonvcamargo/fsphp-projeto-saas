@@ -1,9 +1,10 @@
 <?php $this->layout("_theme"); ?>
+
     <div class="app_main_box">
         <section class="app_main_left">
             <article class="app_widget">
                 <header class="app_widget_title">
-                    <h2 class="icon-bar-chart">Controle</h2>
+                    <h2 class="icon-bar-chart">Controle: (7 dias)</h2>
                 </header>
                 <div id="control"></div>
             </article>
@@ -11,18 +12,12 @@
             <div class="app_main_left_fature">
                 <article class="app_widget app_widget_balance">
                     <header class="app_widget_title">
-                        <h2 class="icon-calendar-minus-o">À receber:</h2>
+                        <h2 class="icon-calendar-minus-o">Receber:</h2>
                     </header>
                     <div class="app_widget_content">
-                        <?php if (!empty($income)): ?>
-                            <?php foreach ($income as $incomeItem): ?>
-                                <?= $this->insert("views/balance", ["invoice" => $incomeItem->data()]); ?>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="message success al-center icon-check-square-o">
-                                No momento, não existem contas a receber.
-                            </div>
-                        <?php endif; ?>
+                        <?php for ($i = 0; $i < 2; $i++): ?>
+                            <?= $this->insert("views/balance", ["month" => $i, "status" => "positive"]); ?>
+                        <?php endfor; ?>
                         <a href="<?= url("app/receber"); ?>" title="Receitas"
                            class="app_widget_more transition">+ Receitas</a>
                     </div>
@@ -30,18 +25,12 @@
 
                 <article class="app_widget app_widget_balance">
                     <header class="app_widget_title">
-                        <h2 class="icon-calendar-check-o">À pagar:</h2>
+                        <h2 class="icon-calendar-check-o">Pagar:</h2>
                     </header>
                     <div class="app_widget_content">
-                        <?php if (!empty($expense)): ?>
-                            <?php foreach ($expense as $expenseItem): ?>
-                                <?= $this->insert("views/balance", ["invoice" => $expenseItem->data()]); ?>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="message error al-center icon-check-square-o">
-                                No momento, não existem contas a pagar.
-                            </div>
-                        <?php endif; ?>
+                        <?php for ($i = 0; $i < 3; $i++): ?>
+                            <?= $this->insert("views/balance", ["month" => $i, "status" => "negative"]); ?>
+                        <?php endfor; ?>
                         <a href="<?= url("app/pagar"); ?>" title="Despesas"
                            class="app_widget_more transition">+ Despesas</a>
                     </div>
@@ -59,15 +48,14 @@
                 </li>
             </ul>
 
-            <article
-                    class="app_flex <?= (!empty($wallet->wallet) && $wallet->wallet >= 0 ? "gradient-green" : "gradient-red"); ?>">
+            <article class="app_flex gradient-green">
                 <header class="app_flex_title">
-                    <h2 class="icon-money">Saldo</h2>
+                    <h2 class="icon-briefcase">Casa</h2>
                 </header>
-                <p class="app_flex_amount">R$ <?= str_price(($wallet->wallet ?? 0)); ?></p>
+                <p class="app_flex_amount">R$ 1.285,00</p>
                 <p class="app_flex_balance">
-                    <span class="income">Receitas: R$ <?= str_price(($wallet->income ?? 0)); ?></span>
-                    <span class="expense">Despesas: R$ <?= str_price(($wallet->expense ?? 0)); ?></span>
+                    <span class="income">Receitas: R$ 12,520.00</span>
+                    <span class="expense">Despesas: R$ 11,000.00</span>
                 </p>
             </article>
 
@@ -76,20 +64,18 @@
                     <h2 class="icon-graduation-cap">Aprenda:</h2>
                 </header>
                 <div class="app_widget_content">
-                    <?php foreach ($posts as $post): ?>
+                    <?php for ($i = 0; $i < 3; $i++): ?>
                         <article class="app_widget_blog_article">
                             <div class="thumb">
-                                <img alt="<?= $post->title; ?>" title="<?= $post->title; ?>"
-                                     src="<?= image($post->cover, 300); ?>"/>
+                                <img alt="" title="" src="<?= theme("/assets/images/thumb.jpg", CONF_VIEW_APP); ?>"/>
                             </div>
                             <h3 class="title">
-                                <a target="_blank" href="<?= url("/blog/{$post->uri}"); ?>"
-                                   title="<?= $post->title; ?>"><?= str_limit_chars($post->title, 50); ?></a>
+                                <a href="#" title="">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</a>
                             </h3>
                         </article>
-                    <?php endforeach; ?>
-                    <a target="_blank" href="<?= url("/blog"); ?>" title="Blog"
-                       class="app_widget_more transition">Ver Mais...</a>
+                    <?php endfor; ?>
+                    <a target="_blank" href="<?= url("/blog"); ?>" title="Blog" class="app_widget_more transition">
+                        Ver Mais...</a>
                 </div>
             </section>
         </section>
@@ -114,8 +100,16 @@
             },
             title: null,
             xAxis: {
-                categories: [<?= $chart->categories;?>],
-                minTickInterval: 1
+                categories: [
+                    '22/11/2018',
+                    '23/11/2018',
+                    '24/11/2018',
+                    '25/11/2018',
+                    '26/11/2018',
+                    '27/11/2018',
+                    '28/11/2018'
+                ],
+                minTickInterval: 2
             },
             yAxis: {
                 allowDecimals: true,
@@ -136,12 +130,12 @@
             },
             series: [{
                 name: 'Receitas',
-                data: [<?= $chart->income;?>],
+                data: [1250, 700, 0, 350, 1000, 580, 300],
                 color: '#61DDBC',
                 lineColor: '#36BA9B'
             }, {
                 name: 'Despesas',
-                data: [<?= $chart->expense;?>],
+                data: [300, 299, 1250, 1000, 300, 0, 0],
                 color: '#F76C82',
                 lineColor: '#D94352'
             }]

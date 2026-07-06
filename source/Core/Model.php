@@ -284,24 +284,36 @@ abstract class Model
     }
 
     /**
-     * Save (Create or Update)
-     * Automatically detects if the record is new or existing
-     * @return bool|int|null
+     * Summary of save
+     * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (!$this->required()) {
+            $this->message->warning("Preencha todos os campos para continuar");
             return false;
         }
 
-        $safe = $this->safe();
+        $id = $this->id;
 
-        if (empty($this->id)) {
-            return $this->create($safe);
+        if (!empty($id)) {
+            $this->update($this->safe(), "id = :id", "id={$id}");
+            if ($this->fail()) {
+                $this->message->error("Erro ao atualizar, verifique os dados");
+                return false;
+            }
         } else {
-            return $this->update($safe, "id = :id", "id={$this->id}");
+            $id = $this->create($this->safe());
+            if ($this->fail()) {
+                $this->message->error("Erro ao cadastrar, verifique os dados");
+                return false;
+            }
         }
+
+        $this->data = $this->findById($id)->data();
+        return true;
     }
+
 
     /**
      * Summary of delete

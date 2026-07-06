@@ -11,7 +11,6 @@ class Access extends Model
     public function __construct()
     {
         return parent::__construct("report_access", ["id"], ["users", "views", "pages"]);
-     
     }
     /**
      * Summary of report
@@ -49,29 +48,5 @@ class Access extends Model
         $find->pages += 1;
         $find->save();
         return $this;
-    }
-
-    public function save(): bool
-    {
-        $safe = $this->safe();
-
-        if (!empty($this->id)) {
-            $accessId = $this->id;
-            $this->update($safe, "id = :id", "id={$accessId}");
-            if ($this->fail()) {
-                $this->message->error("Erro ao atualizar, verifique os dados");
-                return false;
-            }
-            return true;
-        }
-
-        $accessId = $this->create($safe);
-        if ($this->fail()) {
-            $this->message->error("Erro ao cadastrar, verifique os dados");
-            return false;
-        }
-
-        $this->data = $this->findById($accessId)->data();
-        return true;
     }
 }

@@ -94,6 +94,16 @@ function str_title(string $string): string
 
 /**
  * @param string $string
+ * @return string
+ */
+function str_textarea(string $string): string
+{
+    $string = trim(filter_var($string, FILTER_SANITIZE_SPECIAL_CHARS));
+    return nl2br($string);
+}
+
+/**
+ * @param string $string
  * @param int $limit
  * @param string $pointer
  * @return string
@@ -127,6 +137,16 @@ function str_limit_chars(string $string, int $limit, string $pointer = "..."): s
 
     $chars = mb_substr($string, 0, mb_strrpos(mb_substr($string, 0, $limit), " "));
     return "{$chars}{$pointer}";
+}
+
+/**
+ * Summary of str_price
+ * @param string $price
+ * @return string
+ */
+function str_price(string $price): string
+{
+    return number_format((float) $price, 2, ",", ".");
 }
 
 /**
@@ -183,13 +203,23 @@ function redirect(string $url): void
  * ###   ASSETS   ###
  * ##################
  */
+
+/**
+ * Summary of user
+ * @return mixed|Source\Core\Model|Source\Models\User|null
+ */
+function user(): ?\Source\Models\User
+{
+    return \Source\Models\Auth::user();
+}
+
 /**
  * Summary of theme
  * @param string $path
  * @param string $theme
  * @return string
  */
-function theme(string $path,string $theme = CONF_VIEW_THEME): string
+function theme(string $path, string $theme = CONF_VIEW_THEME): string
 {
     $base = (strpos($_SERVER['HTTP_HOST'], "localhost") !== false)
         ? CONF_URL_TEST
