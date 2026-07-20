@@ -9,6 +9,8 @@ use Source\Models\Report\Online;
 use Source\Models\User;
 use Source\Support\Message;
 use Source\Models\CafeApp\AppInvoice;
+use Source\Models\Post;
+
 
 
 /**
@@ -61,22 +63,22 @@ class App extends Controller
         $chartData->expense = "0,0,0,0,0";
         $chartData->income = "0,0,0,0,0";
 
-$invoiceModel = new AppInvoice();
+        $invoiceModel = new AppInvoice();
 
-$chart = $invoiceModel
-    ->find(
-        "user_id = :user AND status = :status AND due_at >= DATE(now() - INTERVAL 4 MONTH) GROUP BY year(due_at), month(due_at) ORDER BY year(due_at) ASC, month(due_at) ASC",
-        "user={$this->user->id}&status=paid",
-        "
+        $chart = $invoiceModel
+            ->find(
+                "user_id = :user AND status = :status AND due_at >= DATE(now() - INTERVAL 4 MONTH) GROUP BY year(due_at), month(due_at) ORDER BY year(due_at) ASC, month(due_at) ASC",
+                "user={$this->user->id}&status=paid",
+                "
         year(due_at) AS due_year,
         month(due_at) AS due_month,
         DATE_FORMAT(due_at, '%m/%Y') AS due_date,
         SUM(CASE WHEN type = 'income' THEN value ELSE 0 END) AS income,
         SUM(CASE WHEN type = 'expense' THEN value ELSE 0 END) AS expense
         "
-    )
-    ->limit(5)
-    ->fetch(true);
+            )
+            ->limit(5)
+            ->fetch(true);
 
 
         if ($chart) {
@@ -97,9 +99,50 @@ $chart = $invoiceModel
 
         //END CHART
 
+        //INCOME && EXPENSE
+        $income = (new AppInvoice())
+            ->find(
+                "user_id = :user AND type = 'income' AND status = 'unpaid' AND date(due_at) <= date(now() + INTERVAL 9 MONTH)",
+                "user={$this->user->id}"
+            )
+            ->order("due_at")
+            ->fetch(true);
+
+        $expense = (new AppInvoice())
+            ->find(
+                "user_id = :user AND type = 'expense' AND status = 'unpaid' AND date(due_at) <= date(now() + INTERVAL 5 MONTH)",
+                "user={$this->user->id}"
+            )
+            ->order("due_at")
+            ->fetch(true);
+        //END INCOME && EXPENSE
+
+        //WALLET
+
+        $wallet = (new AppInvoice())->find(
+            "user_id = :user AND status = :status",
+            "user={$this->user->id}&status=paid",
+            "
+            (SELECT SUM(value) FROM app_invoices WHERE user_id = :user AND status = status AND type = 'income') AS income,
+            (SELECT SUM(value) FROM app_invoices WHERE user_id = :user AND status = status AND type = 'expense') AS expense
+        ")->fetch();
+
+        if($wallet){
+            $wallet->wallet = $wallet->income - $wallet->expense;
+        }
+
+        //END WALLET
+
+        //POSTS
+        $posts = (new Post())->find()->limit(3)->order("post_at DESC")->fetch(true);
+        //END POSTS
         echo $this->view->render("home", [
             "head" => $head,
-            "chart" => $chartData
+            "chart" => $chartData,
+            "income" => $income,
+            "expense" => $expense,
+            "wallet" => $wallet,
+            "posts" => $posts
         ]);
     }
 
