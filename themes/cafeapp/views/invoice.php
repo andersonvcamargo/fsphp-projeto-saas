@@ -1,23 +1,31 @@
+<?php
+
+/**
+ * @var string $type
+ * @var array $wallets
+ * @var array $categories
+ */
+?>
 <div class="app_modal_box app_modal_<?= $type; ?>">
     <p class="title icon-calendar-check-o">Nova <?= ($type == 'income' ? "Receita" : "Despesa"); ?>:</p>
     <form class="app_form" action="<?= url("/app/launch"); ?>" method="post">
-        <input type="hidden" name="currency" value="BRL"/>
-        <input type="hidden" name="type" value="<?= $type; ?>"/>
+        <input type="hidden" name="currency" value="BRL" />
+        <input type="hidden" name="type" value="<?= $type; ?>" />
 
         <label>
             <span class="field icon-leanpub">Descrição:</span>
-            <input class="radius" type="text" name="description" placeholder="Ex: Aluguel" required/>
+            <input class="radius" type="text" name="description" placeholder="Ex: Aluguel" required />
         </label>
 
         <div class="label_group">
             <label>
                 <span class="field icon-money">Valor:</span>
-                <input class="radius mask-money" type="text" name="value" required/>
+                <input class="radius mask-money" type="text" name="value" required />
             </label>
 
             <label>
                 <span class="field icon-filter">Data:</span>
-                <input class="radius masc-date" type="date" name="due_at" required/>
+                <input class="radius masc-date" type="date" name="due_at" required />
             </label>
         </div>
 
@@ -25,9 +33,13 @@
             <label>
                 <span class="field icon-briefcase">Carteira:</span>
                 <select name="wallet">
-                    <?php foreach ($wallets as $wallet): ?>
-                        <option value="<?= $wallet->id; ?>">&ofcir; <?= $wallet->wallet ?></option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($wallets)): ?>
+                        <?php foreach ($wallets as $wallet): ?>
+                            <option value="<?= $wallet->id; ?>">&ofcir; <?= $wallet->wallet ?></option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="" disabled selected>Nenhuma carteira cadastrada</option>
+                    <?php endif; ?>
                 </select>
             </label>
 
@@ -44,20 +56,20 @@
         <div class="label_check">
             <p class="field icon-exchange">Repetição:</p>
             <label class="check"
-                   data-checkbox="true"
-                   data-slideup=".app_modal_<?= $type; ?> .repeate_item_fixed, .app_modal_<?= $type; ?> .repeate_item_enrollment">
+                data-checkbox="true"
+                data-slideup=".app_modal_<?= $type; ?> .repeate_item_fixed, .app_modal_<?= $type; ?> .repeate_item_enrollment">
                 <input type="radio" name="repeat_when" value="single" checked> Única
             </label>
 
             <label data-checkbox="true"
-                   data-slideup=".app_modal_<?= $type; ?> .repeate_item_enrollment"
-                   data-slidedown=".app_modal_<?= $type; ?> .repeate_item_fixed">
+                data-slideup=".app_modal_<?= $type; ?> .repeate_item_enrollment"
+                data-slidedown=".app_modal_<?= $type; ?> .repeate_item_fixed">
                 <input type="radio" name="repeat_when" value="fixed"> Fixa
             </label>
 
             <label data-checkbox="true"
-                   data-slideup=".app_modal_<?= $type; ?> .repeate_item_fixed"
-                   data-slidedown=".app_modal_<?= $type; ?> .repeate_item_enrollment">
+                data-slideup=".app_modal_<?= $type; ?> .repeate_item_fixed"
+                data-slidedown=".app_modal_<?= $type; ?> .repeate_item_enrollment">
                 <input type="radio" name="repeat_when" value="enrollment"> Parcelada
             </label>
         </div>
@@ -70,7 +82,7 @@
         </label>
 
         <label class="repeate_item repeate_item_enrollment" style="display: none">
-            <input class="radius" type="number" min="2" max="420" placeholder="1 parcela" name="enrollments"/>
+            <input class="radius" type="number" min="2" max="420" placeholder="1 parcela" name="enrollments" />
         </label>
 
         <button class="btn radius transition icon-check-square-o">

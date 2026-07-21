@@ -56,12 +56,16 @@ $route->get("/termos", "Web:terms", "terms", []);
 $route->group("/app");
 $route->get("/", "App:home", "home", []);
 $route->get("/receber", "App:income", "income", []);
+$route->get("/receber/{status}/{category}/{date}", "App:income", "income", []);
 $route->get("/pagar", "App:expense", "expense", []);
-$route->get("/fatura/{invoice_id}", "App:invoice", "invoice", []);
-
+$route->get("/pagar/{status}/{category}/{date}", "App:expense", "expense", []);
+$route->get("/fatura/{invoice}", "App:invoice", "invoice", []);
 $route->get("/perfil", "App:profile", "profile", []);
 $route->get("/sair", "App:logout", "logout", []);
 
+$route->post("/launch", "App:launch", "launch", []);
+$route->post("/support", "App:support", "support", []);
+$route->post("/filter", "App:filter", "filter", []);
 /**
  * ERROR ROUTES
  */

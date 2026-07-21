@@ -1,4 +1,13 @@
-<?php $this->layout("_theme"); ?>
+<?php
+
+/**
+ * @var array $income
+ * @var array $expense
+ * @var \stdClass $wallet
+ * @var \stdClass $chart
+ * @var array $posts
+ */
+$this->layout("_theme"); ?>
 <div class="app_main_box">
     <section class="app_main_left">
         <article class="app_widget">

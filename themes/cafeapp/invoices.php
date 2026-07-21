@@ -1,4 +1,10 @@
-<?php $this->layout("_theme"); ?>
+<?php 
+/**
+ * @var string $type
+ * @var array $categories
+ * @var array $invoices
+ */
+$this->layout("_theme"); ?>
 
 <div class="app_launch_header">
 
@@ -12,7 +18,7 @@
         </select>
 
         <select name="category">
-            <option value="">Todas</option>
+            <option value="all">Todas</option>
             <?php foreach ($categories as $category): ?>
                 <option <?= (!empty($filter->category) && $filter->category == $category->id ? "selected" : ""); ?>
                         value="<?= $category->id; ?>"><?= $category->name; ?></option>
