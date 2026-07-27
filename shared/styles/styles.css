@@ -113,7 +113,4 @@
 .icon-exchange:before { content: "\e049"; }
 .icon-square-o:before { content: "\e04a"; }
 
-.icon-notext:before {
-  content: "" !important;
-  margin: 0 !important;
-}
+.icon-notext:before{margin:0!important}
