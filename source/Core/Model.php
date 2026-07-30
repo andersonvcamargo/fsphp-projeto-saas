@@ -186,7 +186,7 @@ abstract class Model
      * @param bool $all
      * @return Model|array|null
      */
-    public function fetch(bool $all = false): Model|array|null
+    public function fetch(bool $all = false): static|array|null
     {
         try {
             $sql = $this->query

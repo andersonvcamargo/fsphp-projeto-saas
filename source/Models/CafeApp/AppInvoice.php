@@ -105,7 +105,7 @@ class AppInvoice extends Model
      * Summary of category
      * @return void
      */
-    public function category(): AppCategory
+    public function category(): ?AppCategory
     {
         return (new AppCategory())->findById($this->category_id);
     }

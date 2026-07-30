@@ -1,11 +1,12 @@
-<?php
 
+<?php
 /**
- * @var string $type
+ * @var \Source\Models\CafeApp\AppInvoice $invoice
  * @var array $wallets
  * @var array $categories
+ * @var string $type
  */
-?>
+$this->layout("_theme"); ?>
 <div class="app_modal_box app_modal_<?= $type; ?>">
     <p class="title icon-calendar-check-o">Nova <?= ($type == 'income' ? "Receita" : "Despesa"); ?>:</p>
     <form class="app_form" action="<?= url("/app/launch"); ?>" method="post">

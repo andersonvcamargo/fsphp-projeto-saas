@@ -64,6 +64,7 @@ $route->get("/perfil", "App:profile", "profile", []);
 $route->get("/sair", "App:logout", "logout", []);
 
 $route->post("/launch", "App:launch", "launch", []);
+$route->post("/invoice/{invoice}", "App:invoice", "invoice", []);
 $route->post("/support", "App:support", "support", []);
 $route->post("/onpaid", "App:onpaid", "onpaid", []);
 $route->post("/filter", "App:filter", "filter", []);
