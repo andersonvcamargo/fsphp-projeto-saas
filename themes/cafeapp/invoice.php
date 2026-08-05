@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Source\Core\Model $invoice
+ * @var \Source\Models\CafeApp\AppInvoice $invoice
  * @var array $wallets
  * @var array $categories
  */

@@ -1,8 +1,9 @@
-<?php 
+<?php
 /**
  * @var string $type
+ * @var \Source\Models\CafeApp\AppInvoice[] $invoices
  * @var array $categories
- * @var array $invoices
+ * @var object $filter
  */
 $this->layout("_theme"); ?>
 
@@ -70,6 +71,7 @@ $this->layout("_theme"); ?>
         $unpaid = 0;
         $paid = 0;
         foreach ($invoices as $invoice):
+            /** @var \Source\Models\CafeApp\AppInvoice $invoice */
             ?>
             <article class="app_launch_item">
                 <p class="desc app_invoice_link transition">

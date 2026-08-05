@@ -186,7 +186,7 @@ abstract class Model
      * @param bool $all
      * @return Model|array|null
      */
-    public function fetch(bool $all = false): Model|array|null
+    public function fetch(bool $all = false): static|array|null
     {
         try {
             $sql = $this->query
@@ -324,7 +324,7 @@ abstract class Model
     public function delete(string $terms, string $params): bool
     {
         try {
-            $stmt = Connect::getInstance()->prepare("DELETE FROM " . static::$entity . " WHERE {$terms} = :key");
+            $stmt = Connect::getInstance()->prepare("DELETE FROM " . static::$entity . " WHERE {$terms}");
 
             if ($params) {
                 $parsedParams = [];

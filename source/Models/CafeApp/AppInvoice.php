@@ -102,10 +102,11 @@ class AppInvoice extends Model
     }
 
     /**
-     * Summary of category
-     * @return void
+     * Retorna a categoria associada à fatura.
+     *
+     * @return AppCategory|null
      */
-    public function category(): AppCategory
+    public function category(): ?AppCategory
     {
         return (new AppCategory())->findById($this->category_id);
     }
@@ -113,11 +114,11 @@ class AppInvoice extends Model
     public function balance(User $user, int $year, int $month, string $type): ?object
     {
         $onpaid = $this->find(
-            "user_id = user",
-            "user{$user->id}&type={$type}&year={$year}&month={$month}",
+            "user_id = :user",
+            "user={$user->id}&type={$type}&year={$year}&month={$month}",
             "
             (SELECT SUM(value) FROM app_invoices WHERE user_id = :user AND type = :type AND year(due_at) = :year AND month(due_at) = :month AND status = 'paid') AS paid,
-            (SELECT SUM(value) FROM app_invoices WHERE user_id = :user AND type = :type AND year(due_at) = :year AND month(due_at) = :month AND status = 'unpaid') AS unpaid,
+            (SELECT SUM(value) FROM app_invoices WHERE user_id = :user AND type = :type AND year(due_at) = :year AND month(due_at) = :month AND status = 'unpaid') AS unpaid
             "
         )->fetch();
 
