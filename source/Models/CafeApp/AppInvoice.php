@@ -44,8 +44,9 @@ class AppInvoice extends Model
             $start = new \DateTime($fixedItem->due_at);
             $end = new \DateTime("+{$afterMonths}months");
 
-            $interval = new \DateInterval("P1M");
-
+            if ($fixedItem->period == "month") {
+                $interval = new \DateInterval("P1M");
+            }
             if ($fixedItem->period == "year") {
                 $interval = new \DateInterval("P1Y");
             }

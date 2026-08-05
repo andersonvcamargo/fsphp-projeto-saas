@@ -1,18 +1,10 @@
 <?php
 /**
  * @var string $type
-
  * @var \Source\Models\CafeApp\AppInvoice[] $invoices
-
- * @var array $invoices
-
  * @var array $categories
  * @var object $filter
  */
-$unpaid = 0;
-$paid = 0;
-foreach ($invoices as $invoice):
-    /** @var \Source\Models\CafeApp\AppInvoice $invoice */
 $this->layout("_theme"); ?>
 
 <div class="app_launch_header">
@@ -128,4 +120,3 @@ $this->layout("_theme"); ?>
         </div>
     <?php endif; ?>
 </section>
-<?php endforeach; ?>
