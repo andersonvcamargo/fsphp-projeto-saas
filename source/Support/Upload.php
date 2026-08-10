@@ -37,10 +37,11 @@ class Upload
      * @param array $image
      * @param string $name
      * @param int $width
+     * @param int|null $height
      * @return null|string
      * @throws \Exception
      */
-    public function image(array $image, string $name, int $width = CONF_IMAGE_SIZE): ?string
+    public function image(array $image, string $name, int $width = CONF_IMAGE_SIZE, ?int $height = null): ?string
     {
         $upload = new Image(CONF_UPLOAD_DIR, CONF_UPLOAD_IMAGE_DIR);
         if (empty($image['type']) || !in_array($image['type'], $upload::isAllowed())) {
@@ -48,7 +49,7 @@ class Upload
             return null;
         }
 
-        return $upload->upload($image, $name, $width, CONF_IMAGE_QUALITY);
+        return str_replace(DIRECTORY_SEPARATOR, '/', $upload->upload($image, $name, $width, CONF_IMAGE_QUALITY));
     }
 
     /**
@@ -65,7 +66,7 @@ class Upload
             return null;
         }
 
-        return $upload->upload($file, $name);
+        return str_replace(DIRECTORY_SEPARATOR, '/', $upload->upload($file, $name));
     }
 
     /**
@@ -82,7 +83,7 @@ class Upload
             return null;
         }
 
-        return $upload->upload($media, $name);
+        return str_replace(DIRECTORY_SEPARATOR, '/', $upload->upload($media, $name));
     }
 
     /**

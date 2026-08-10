@@ -1,3 +1,13 @@
+<?php
+/**
+ * @var \Source\Models\CafeApp\AppInvoice $invoice
+ */
+?>
+<?php
+/**
+ * @var \Source\Models\CafeApp\AppInvoice $invoice
+ */
+?>
 <div class="balance <?= ($invoice->type == "income" ? "positive" : "negative"); ?>">
     <p class="desc">
         <b class="app_invoice_link transition">

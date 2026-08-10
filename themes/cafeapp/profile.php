@@ -1,4 +1,10 @@
-<?php $this->layout("_theme"); ?>
+<?php
+/**
+ * @var string $head
+ * @var \Source\Models\User $user
+ * @var string $photo
+ */
+$this->layout("_theme"); ?>
 
 <div class="app_formbox app_widget">
     <form class="app_form" action="<?= url("/app/profile"); ?>" method="post">

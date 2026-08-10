@@ -3,6 +3,7 @@
 namespace Source\App;
 
 use Source\Core\Controller;
+use Source\Core\Session;
 use Source\Models\Auth;
 use Source\Models\Report\Access;
 use Source\Models\Report\Online;
@@ -14,6 +15,8 @@ use Source\Core\View;
 use Source\Support\Email;
 use Source\Models\CafeApp\AppCategory;
 use Source\Models\CafeApp\AppWallet;
+use Source\Support\Upload;
+use Source\Support\Thumb;
 
 
 
@@ -41,7 +44,17 @@ class App extends Controller
         (new Access())->report();
         (new Online())->report();
 
+        (new AppWallet())->start($this->user);
         (new AppInvoice())->fixed($this->user, 3);
+
+        if ($this->user->status != "confirmed") {
+            $session = new Session();
+            if (!$session->has("appconfirmed")) {
+                $this->message->info("IMPORTANTE: Acesse seu e-mail para confirmar seu cadastro e ativar todos os recursos")->flash();
+                $session->set("appconfirmed", true);
+                (new Auth())->register($this->user);
+            }
+        }
     }
 
     /**
@@ -249,6 +262,31 @@ class App extends Controller
                 "category" => ($data["category"] ?? null),
                 "date" => (!empty($data["date"]) ? str_replace("-", "/", $data["date"]) : null)
             ]
+        ]);
+    }
+
+    /**
+     * Summary of fixed
+     * @return void
+     */
+    public function fixed(): void
+    {
+        $head = $this->seo->render(
+            "Minhas contas fixas - " . CONF_SITE_NAME,
+            CONF_SITE_DESC,
+            url(""),
+            theme("/assets/images/share.jpg"),
+            false
+        );
+
+        echo $this->view->render("recurrences", [
+            "head" => $head,
+
+            "invoices" => (new AppInvoice())->find(
+                "user_id = :user AND type IN('fixed_income', 'fixed_expense')",
+                "user={$this->user->id}"
+            )->fetch(true)
+
         ]);
     }
 
@@ -535,10 +573,83 @@ class App extends Controller
     }
 
     /**
-     * APP PROFILE (Perfil)
+     * Summary of profile
+     * @param mixed $data
+     * @return void
      */
-    public function profile()
+    public function profile(?array $data): void
     {
+        $json = [];
+
+        if (!empty($data["update"])) {
+            if (empty($data["datebirth"]) || !preg_match("/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/", $data["datebirth"], $matches)) {
+                $json["message"] = $this->message->warning("Informe uma data de nascimento válida.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $d = $matches[1];
+            $m = $matches[2];
+            $y = $matches[3];
+
+            $userId = (!empty($this->user->id) ? intval($this->user->id) : 0);
+            if (!$userId) {
+                $json["message"] = $this->message->error("Erro ao atualizar seu perfil. Faça login novamente.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $user = (new User())->findById($userId);
+            if (!$user) {
+                $json["message"] = $this->message->error("Usuário não encontrado.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $user->first_name = $data["first_name"];
+            $user->last_name = $data["last_name"];
+            $user->genre = $data["genre"];
+            $user->datebirth = "{$y}-{$m}-{$d}";
+            $user->document = preg_replace("/[^0-9]/", "", $data["document"]);
+
+            if (!empty($_FILES["photo"])) {
+                $file = $_FILES["photo"];
+                $upload = new Upload();
+
+                if ($this->user->photo()) {
+                    (new Thumb())->flush("storage/{$this->user->photo}");
+                    $upload->remove("storage/{$this->user->photo}");
+                }
+
+                if (!$user->photo = $upload->image($file, "{$user->first_name} {$user->last_name} " . time(), 360, 360)) {
+                    $json["message"] = $upload->message()->before("Ooops {%this->user->first_name}! ")->after(".")->render();
+                    echo json_encode($json);
+                    return;
+                }
+            }
+
+            if (!empty($data["password"])) {
+                if (empty($data["password_re"]) || $data["password"] != $data["password_re"]) {
+                    $json["message"] = $this->message->warning("Para alterar sua senha, informe e repita a nova senha!")->render();
+                    echo json_encode($json);
+                    return;
+                }
+
+                $user->password = $data["password"];
+            }
+
+            if (!$user->save()) {
+                $json["message"] = $user->message()->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $json["message"] = $this->message->success("Pronto {$this->user->first_name}. Seus dados foram atualizados com sucesso.")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        // Página normal de perfil
         $head = $this->seo->render(
             "Meu perfil - " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -548,7 +659,10 @@ class App extends Controller
         );
 
         echo $this->view->render("profile", [
-            "head" => $head
+            "head" => $head,
+            "user" => $this->user,
+            "photo" => ($this->user->photo() ? image($this->user->photo, 360, 360) :
+                theme("/assets/image/avatar.jpg", CONF_VIEW_APP))
         ]);
     }
 

@@ -62,7 +62,7 @@ $route->get("/pagar/{status}/{category}/{date}", "App:expense", "expense", []);
 $route->get("/fatura/{invoice}", "App:invoice", "invoice", []);
 $route->get("/perfil", "App:profile", "profile", []);
 $route->get("/sair", "App:logout", "logout", []);
-// $route->get("/fixas", "App:fixed", "fixed", []); // TODO: criar App::fixed() antes de habilitar
+$route->get("/fixas", "App:fixed", "fixed", []);
 
 $route->post("/launch", "App:launch", "launch", []);
 $route->post("/invoice/{invoice}", "App:invoice", "invoice", []);

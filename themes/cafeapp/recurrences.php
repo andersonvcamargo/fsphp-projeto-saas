@@ -1,4 +1,8 @@
-<?php $this->layout("_theme"); ?>
+<?php
+/**
+ * @var \Source\Models\CafeApp\AppInvoice[]|array $invoices
+ */
+$this->layout("_theme"); ?>
 
 <div class="app_main_right" style="margin: 0;">
     <ul class="app_widget_shortcuts">

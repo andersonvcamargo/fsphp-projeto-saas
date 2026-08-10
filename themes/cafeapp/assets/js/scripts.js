@@ -124,24 +124,23 @@ $(function () {
                 var load_title = $(".ajax_load_box_title");
                 load_title.text("Enviando (" + loaded + "%)");
 
-                form.find("input[type='file']").val(null);
                 if (completed >= 100) {
                     load_title.text("Aguarde, carregando...");
                 }
             },
             success: function (response) {
+                load.fadeOut(200);
+                
                 //redirect
                 if (response.redirect) {
                     window.location.href = response.redirect;
-                } else {
-                    load.fadeOut(200);(200);
+                    return;
                 }
 
                 //reload
                 if (response.reload) {
                     window.location.reload();
-                } else {
-                    load.fadeOut(200);
+                    return;
                 }
 
                 //message
@@ -162,6 +161,7 @@ $(function () {
                 }
             },
             error: function () {
+                load.fadeOut(200);
                 var message = "<div class='message error icon-warning'>Desculpe mas não foi possível processar a requisição. Favor tente novamente!</div>";
                 if (flash.length) {
                     flash.html(message).fadeIn(100).effect("bounce", 300);
