@@ -116,6 +116,7 @@ $(function () {
             url: form.attr("action"),
             type: "POST",
             dataType: "json",
+            iframe: false,
             beforeSend: function () {
                 load.fadeIn(200).css("display", "flex");
             },

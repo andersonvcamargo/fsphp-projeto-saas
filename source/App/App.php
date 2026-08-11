@@ -612,7 +612,7 @@ class App extends Controller
             $user->datebirth = "{$y}-{$m}-{$d}";
             $user->document = preg_replace("/[^0-9]/", "", $data["document"]);
 
-            if (!empty($_FILES["photo"])) {
+            if (!empty($_FILES["photo"]["name"]) && $_FILES["photo"]["error"] === UPLOAD_ERR_OK) {
                 $file = $_FILES["photo"];
                 $upload = new Upload();
 
@@ -621,11 +621,13 @@ class App extends Controller
                     $upload->remove("storage/{$this->user->photo}");
                 }
 
-                if (!$user->photo = $upload->image($file, "{$user->first_name} {$user->last_name} " . time(), 360, 360)) {
-                    $json["message"] = $upload->message()->before("Ooops {%this->user->first_name}! ")->after(".")->render();
+                if (!$photo = $upload->image($file, "{$user->first_name} {$user->last_name} " . time(), 360, 360)) {
+                    $json["message"] = $upload->message()->before("Ooops {$this->user->first_name}! ")->after(".")->render();
                     echo json_encode($json);
                     return;
                 }
+
+                $user->photo = ltrim(substr($photo, strlen(CONF_UPLOAD_DIR)), "/");
             }
 
             if (!empty($data["password"])) {
@@ -645,6 +647,7 @@ class App extends Controller
             }
 
             $json["message"] = $this->message->success("Pronto {$this->user->first_name}. Seus dados foram atualizados com sucesso.")->render();
+            $json["reload"] = true;
             echo json_encode($json);
             return;
         }
@@ -662,7 +665,7 @@ class App extends Controller
             "head" => $head,
             "user" => $this->user,
             "photo" => ($this->user->photo() ? image($this->user->photo, 360, 360) :
-                theme("/assets/image/avatar.jpg", CONF_VIEW_APP))
+                theme("/assets/images/avatar.jpg", CONF_VIEW_APP))
         ]);
     }
 
