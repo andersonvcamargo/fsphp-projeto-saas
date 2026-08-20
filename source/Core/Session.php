@@ -13,6 +13,7 @@ class Session
     public function __construct()
     {
         if (!session_id()) {
+            session_name("SAASAPPSESSID");
             session_start();
         }
     }

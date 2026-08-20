@@ -3,23 +3,25 @@
 /**
  * DATABASE
  */
-define("CONF_DB_HOST", "localhost");
+define("CONF_DB_HOST", "db");
 define("CONF_DB_USER", "root");
-define("CONF_DB_PASS", "");
-define("CONF_DB_NAME", "fullstackphp");
+define("CONF_DB_PASS", "root");
+define("CONF_DB_NAME", "fsphp_saas");
 
 /**
  * PROJECT URLs
  */
 //define("CONF_URL_BASE", "https://www.cafecontrol.com.br");
 //define("CONF_URL_TEST", "https://localhost/fsphp-projeto-mvc");
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 
+define("CONF_URL_BASE", "https://www.cafecontrol.com.br");
+
 if (str_contains($host, 'localhost') || str_contains($host, '127.0.0.1')) {
-    define("CONF_URL_TEST", "{$scheme}://{$host}/fsphp-projeto-mvc");
+    define("CONF_URL_TEST", "{$scheme}://{$host}");
 } else {
-    define("CONF_URL_BASE", "https://www.cafecontrol.com.br");
+    define("CONF_URL_TEST", CONF_URL_BASE);
 }
 define("CONF_URL_ADMIN", "/admin");
 
@@ -97,7 +99,7 @@ define("CONF_IMAGE_QUALITY", ["jpg" => 75, "png" => 5]);
 define("CONF_MAIL_HOST", "smtp-relay.brevo.com");
 define("CONF_MAIL_PORT", "587");
 define("CONF_MAIL_USER", "a51512001@smtp-brevo.com");
-define("CONF_MAIL_PASS", "xsmtpsib-b137e686a2dd0ec1fff4af5a6cdfee8f8bd57c716f1f94e32941d64405c5dde3-BJg5xLp9enZ2xrpR");
+define("CONF_MAIL_PASS", "sua senha aqui");
 define("CONF_MAIL_SENDER", ["name" => "Anderson V. Camargo", "address" => "andersoncamargosi@gmail.com"]);
 define("CONF_MAIL_SUPPORT", "andersoncamargosi@gmail.com");
 define("CONF_MAIL_OPTION_LANG", "br");

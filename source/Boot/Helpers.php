@@ -161,7 +161,7 @@ function str_price(string $price): string
  */
 function url(string $path): string
 {
-    if (strpos($_SERVER['HTTP_HOST'], "localhost")) {
+    if (strpos($_SERVER['HTTP_HOST'], "localhost") !== false) {
         if ($path) {
             return CONF_URL_TEST . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
         }
